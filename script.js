@@ -40,6 +40,40 @@ class BlueyTicTacToe {
     initializeGame() {
         this.setupEventListeners();
         this.showWelcomeScreen();
+        this.updateButtonTexts();
+    }
+    
+    updateButtonTexts() {
+        // Random catchphrases for start/new game buttons
+        const catchphrases = [
+            "Wackadoo, let's start!",
+            "Off we go!",
+            "Let's give it a whirl!",
+            "Ready, set, Bluey!"
+        ];
+        
+        // Random phrases for end tournament button
+        const endGamePhrases = [
+            "All done, let's play later!",
+            "Game over, tickety-boo!",
+            "Playtime's paused.",
+            "That's a wrap, mate."
+        ];
+        
+        // Update start tournament button
+        const startBtn = document.getElementById('start-tournament');
+        const randomPhrase = catchphrases[Math.floor(Math.random() * catchphrases.length)];
+        startBtn.innerHTML = `🌟 ${randomPhrase} 🌟`;
+        
+        // Update new game button
+        const newGameBtn = document.getElementById('reset-btn');
+        const randomPhrase2 = catchphrases[Math.floor(Math.random() * catchphrases.length)];
+        newGameBtn.textContent = randomPhrase2;
+        
+        // Update end tournament button
+        const endBtn = document.getElementById('end-tournament');
+        const randomEndPhrase = endGamePhrases[Math.floor(Math.random() * endGamePhrases.length)];
+        endBtn.textContent = randomEndPhrase;
     }
     
     setupEventListeners() {
@@ -401,14 +435,29 @@ class BlueyTicTacToe {
         if (result === 'X') {
             this.tournamentData.playerWins++;
             this.updateStatus(`🎉 ${playerName} wins! Great job!`, 'status-win');
-            this.showCelebration('Wackadoo!', `${playerName} won this game!`, 'win');
+            
+            // Random celebration messages for player wins
+            const winTitles = ["You're the Cheeky Winner!", "Hooray! You're the Top Dog!", "Wackadoo! You Won!", "Winner, just like Bluey!"];
+            const winMessages = [`${playerName} won this game!`, `Great job, ${playerName}!`, `You're brilliant, ${playerName}!`, `Well done, champ!`];
+            
+            const randomTitle = winTitles[Math.floor(Math.random() * winTitles.length)];
+            const randomMessage = winMessages[Math.floor(Math.random() * winMessages.length)];
+            
+            this.showCelebration(randomTitle, randomMessage, 'win');
         } else if (result === 'O') {
             this.tournamentData.computerWins++;
             this.updateStatus("🤖 Computer wins! Try again!", 'status-lose');
             this.showCelebration('Good try!', `Computer won this time. Keep going!`, 'lose');
         } else {
+            // Random draw messages
+            const drawTitles = ["It's a Fair Dinkum Tie!", "No Winners, Just Fun!", "Even Stevens, Mate!", "Everyone's a Bluey Champ!"];
+            const drawMessages = ["Well played by everyone!", "Great game, mate!", "What a ripper game!", "Fair dinkum effort!"];
+            
+            const randomDrawTitle = drawTitles[Math.floor(Math.random() * drawTitles.length)];
+            const randomDrawMessage = drawMessages[Math.floor(Math.random() * drawMessages.length)];
+            
             this.updateStatus("🤝 It's a draw! Good game!", 'status-draw');
-            this.showCelebration('Great game!', `It's a draw! Well played!`, 'draw');
+            this.showCelebration(randomDrawTitle, randomDrawMessage, 'draw');
         }
         
         this.updateTournamentDisplay();

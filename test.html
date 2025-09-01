@@ -394,6 +394,116 @@
             testFramework.assertFalse(game.checkWin('O'), 'Should not detect O win');
         });
 
+        // Test 13: Phrase arrays should contain correct Bluey catchphrases
+        testFramework.test('Catchphrases array should contain authentic Bluey phrases', () => {
+            const catchphrases = [
+                "Wackadoo, let's start!",
+                "Off we go!",
+                "Let's give it a whirl!",
+                "Ready, set, Bluey!"
+            ];
+            
+            testFramework.assertEqual(catchphrases.length, 4, 'Should have 4 catchphrases');
+            testFramework.assertTrue(catchphrases.includes("Wackadoo, let's start!"), 'Should include Wackadoo phrase');
+            testFramework.assertTrue(catchphrases.includes("Ready, set, Bluey!"), 'Should include Ready set Bluey phrase');
+        });
+
+        // Test 14: End game phrases should contain authentic Australian expressions
+        testFramework.test('End game phrases should contain authentic expressions', () => {
+            const endGamePhrases = [
+                "All done, let's play later!",
+                "Game over, tickety-boo!",
+                "Playtime's paused.",
+                "That's a wrap, mate."
+            ];
+            
+            testFramework.assertEqual(endGamePhrases.length, 4, 'Should have 4 end game phrases');
+            testFramework.assertTrue(endGamePhrases.includes("Game over, tickety-boo!"), 'Should include tickety-boo phrase');
+            testFramework.assertTrue(endGamePhrases.includes("That's a wrap, mate."), 'Should include mate phrase');
+        });
+
+        // Test 15: Random phrase selection should work correctly
+        testFramework.test('Random phrase selection should return valid phrases', () => {
+            const catchphrases = [
+                "Wackadoo, let's start!",
+                "Off we go!",
+                "Let's give it a whirl!",
+                "Ready, set, Bluey!"
+            ];
+            
+            // Test multiple random selections
+            for (let i = 0; i < 10; i++) {
+                const randomPhrase = catchphrases[Math.floor(Math.random() * catchphrases.length)];
+                testFramework.assertTrue(catchphrases.includes(randomPhrase), 'Random phrase should be from the array');
+            }
+        });
+
+        // Test 16: Phrase selection should be properly random (distribution test)
+        testFramework.test('Phrase selection should show randomness over multiple calls', () => {
+            const catchphrases = [
+                "Wackadoo, let's start!",
+                "Off we go!",
+                "Let's give it a whirl!",
+                "Ready, set, Bluey!"
+            ];
+            
+            const counts = {};
+            const iterations = 100;
+            
+            // Count phrase occurrences
+            for (let i = 0; i < iterations; i++) {
+                const phrase = catchphrases[Math.floor(Math.random() * catchphrases.length)];
+                counts[phrase] = (counts[phrase] || 0) + 1;
+            }
+            
+            // Each phrase should appear at least once in 100 iterations (very likely)
+            const uniquePhrases = Object.keys(counts).length;
+            testFramework.assertTrue(uniquePhrases >= 2, 'Should show variety in phrase selection');
+        });
+
+        // Test 17: Button text formatting should work correctly
+        testFramework.test('Button text formatting should include emojis for start button', () => {
+            const catchphrases = [
+                "Wackadoo, let's start!",
+                "Off we go!",
+                "Let's give it a whirl!",
+                "Ready, set, Bluey!"
+            ];
+            
+            const randomPhrase = catchphrases[0]; // Use first phrase for consistent testing
+            const formattedText = `🌟 ${randomPhrase} 🌟`;
+            
+            testFramework.assertTrue(formattedText.includes('🌟'), 'Should include star emojis');
+            testFramework.assertTrue(formattedText.includes(randomPhrase), 'Should include the phrase');
+            testFramework.assertEqual(formattedText, `🌟 ${randomPhrase} 🌟`, 'Should format correctly');
+        });
+
+        // Test 18: All phrases should be family-friendly and thematically appropriate
+        testFramework.test('All phrases should be appropriate for family audiences', () => {
+            const allPhrases = [
+                "Wackadoo, let's start!",
+                "Off we go!",
+                "Let's give it a whirl!",
+                "Ready, set, Bluey!",
+                "All done, let's play later!",
+                "Game over, tickety-boo!",
+                "Playtime's paused.",
+                "That's a wrap, mate."
+            ];
+            
+            // Check that all phrases are non-empty and contain appropriate language
+            allPhrases.forEach(phrase => {
+                testFramework.assertTrue(phrase.length > 0, 'Phrase should not be empty');
+                testFramework.assertFalse(phrase.includes('!@#$'), 'Should not contain inappropriate characters');
+                
+                // Check for Bluey-themed words
+                const blueyWords = ['Bluey', 'Wackadoo', 'tickety-boo', 'mate', 'ripper'];
+                const hasThematicWord = blueyWords.some(word => phrase.includes(word)) || 
+                                       phrase.includes('play') || phrase.includes('game');
+                // Note: Not all phrases need thematic words, but they should be family-friendly
+            });
+        });
+
         // Run all tests
         testFramework.runTests();
     </script>

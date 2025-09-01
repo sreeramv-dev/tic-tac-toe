@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bluey Phrase Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: linear-gradient(135deg, #4A90E2, #87CEEB);
+            color: white;
+        }
+        .test-container {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            background: #FF8C42;
+            color: white;
+        }
+        .phrase-list {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎾 Bluey Phrase Randomization Test</h1>
+    
+    <div class="test-container">
+        <h2>Start/New Game Phrases:</h2>
+        <div class="phrase-list" id="start-phrases"></div>
+        <button onclick="testStartPhrases()">Generate 10 Random Start Phrases</button>
+    </div>
+    
+    <div class="test-container">
+        <h2>End Game Phrases:</h2>
+        <div class="phrase-list" id="end-phrases"></div>
+        <button onclick="testEndPhrases()">Generate 10 Random End Phrases</button>
+    </div>
+    
+    <div class="test-container">
+        <h2>Current Button Simulation:</h2>
+        <button id="simulated-start">Loading...</button>
+        <button id="simulated-new">Loading...</button>
+        <button id="simulated-end">Loading...</button>
+        <br><br>
+        <button onclick="updateSimulatedButtons()">Refresh Button Phrases</button>
+    </div>
+
+    <script>
+        // Exact same arrays from the main application
+        const catchphrases = [
+            "Wackadoo, let's start!",
+            "Off we go!",
+            "Let's give it a whirl!",
+            "Ready, set, Bluey!"
+        ];
+        
+        const endGamePhrases = [
+            "All done, let's play later!",
+            "Game over, tickety-boo!",
+            "Playtime's paused.",
+            "That's a wrap, mate."
+        ];
+        
+        function testStartPhrases() {
+            const results = [];
+            for (let i = 0; i < 10; i++) {
+                const randomPhrase = catchphrases[Math.floor(Math.random() * catchphrases.length)];
+                results.push(`${i + 1}. ${randomPhrase}`);
+            }
+            document.getElementById('start-phrases').innerHTML = results.join('<br>');
+        }
+        
+        function testEndPhrases() {
+            const results = [];
+            for (let i = 0; i < 10; i++) {
+                const randomPhrase = endGamePhrases[Math.floor(Math.random() * endGamePhrases.length)];
+                results.push(`${i + 1}. ${randomPhrase}`);
+            }
+            document.getElementById('end-phrases').innerHTML = results.join('<br>');
+        }
+        
+        function updateSimulatedButtons() {
+            // Update start tournament button
+            const startBtn = document.getElementById('simulated-start');
+            const randomPhrase = catchphrases[Math.floor(Math.random() * catchphrases.length)];
+            startBtn.innerHTML = `🌟 ${randomPhrase} 🌟`;
+            
+            // Update new game button
+            const newGameBtn = document.getElementById('simulated-new');
+            const randomPhrase2 = catchphrases[Math.floor(Math.random() * catchphrases.length)];
+            newGameBtn.textContent = randomPhrase2;
+            
+            // Update end tournament button
+            const endBtn = document.getElementById('simulated-end');
+            const randomEndPhrase = endGamePhrases[Math.floor(Math.random() * endGamePhrases.length)];
+            endBtn.textContent = randomEndPhrase;
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            updateSimulatedButtons();
+            testStartPhrases();
+            testEndPhrases();
+        });
+    </script>
+</body>
+</html>
