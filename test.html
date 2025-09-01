@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe Unit Tests</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .test-passed {
+            color: #2ecc71;
+            font-weight: bold;
+        }
+        .test-failed {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .test-result.passed {
+            background-color: #d5f4e6;
+            border-left: 4px solid #2ecc71;
+        }
+        .test-result.failed {
+            background-color: #fdf2f2;
+            border-left: 4px solid #e74c3c;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .summary {
+            font-size: 1.2em;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .summary.all-passed {
+            background-color: #d5f4e6;
+            color: #2ecc71;
+        }
+        .summary.some-failed {
+            background-color: #fdf2f2;
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Tic-Tac-Toe Unit Tests</h1>
+        <div id="test-results"></div>
+        <div id="test-summary"></div>
+    </div>
+
+    <script>
+        // Mock DOM elements for testing
+        class MockElement {
+            constructor() {
+                this.textContent = '';
+                this.className = '';
+                this.classList = {
+                    add: (cls) => {
+                        if (this.className) this.className += ' ';
+                        this.className += cls;
+                    },
+                    remove: (cls) => {
+                        this.className = this.className.replace(new RegExp(`\\b${cls}\\b`, 'g'), '').trim();
+                    }
+                };
+                this.addEventListener = () => {};
+            }
+        }
+
+        // Mock document for testing
+        const mockDocument = {
+            getElementById: (id) => new MockElement(),
+            querySelectorAll: (selector) => Array(9).fill(0).map(() => new MockElement()),
+            addEventListener: () => {}
+        };
+
+        // Test framework
+        class TestFramework {
+            constructor() {
+                this.tests = [];
+                this.passedTests = 0;
+                this.failedTests = 0;
+            }
+
+            test(name, testFunction) {
+                try {
+                    testFunction();
+                    this.tests.push({ name, status: 'passed', error: null });
+                    this.passedTests++;
+                } catch (error) {
+                    this.tests.push({ name, status: 'failed', error: error.message });
+                    this.failedTests++;
+                }
+            }
+
+            assertEqual(actual, expected, message = '') {
+                if (actual !== expected) {
+                    throw new Error(`${message} Expected: ${expected}, Actual: ${actual}`);
+                }
+            }
+
+            assertTrue(condition, message = '') {
+                if (!condition) {
+                    throw new Error(`${message} Expected condition to be true`);
+                }
+            }
+
+            assertFalse(condition, message = '') {
+                if (condition) {
+                    throw new Error(`${message} Expected condition to be false`);
+                }
+            }
+
+            assertArrayEqual(actual, expected, message = '') {
+                if (JSON.stringify(actual) !== JSON.stringify(expected)) {
+                    throw new Error(`${message} Expected: [${expected}], Actual: [${actual}]`);
+                }
+            }
+
+            runTests() {
+                const resultsDiv = document.getElementById('test-results');
+                const summaryDiv = document.getElementById('test-summary');
+
+                this.tests.forEach(test => {
+                    const resultDiv = document.createElement('div');
+                    resultDiv.className = `test-result ${test.status}`;
+                    
+                    if (test.status === 'passed') {
+                        resultDiv.innerHTML = `<span class="test-passed">✓ PASSED:</span> ${test.name}`;
+                    } else {
+                        resultDiv.innerHTML = `<span class="test-failed">✗ FAILED:</span> ${test.name}<br><small>${test.error}</small>`;
+                    }
+                    
+                    resultsDiv.appendChild(resultDiv);
+                });
+
+                // Summary
+                const totalTests = this.tests.length;
+                const summaryClass = this.failedTests === 0 ? 'all-passed' : 'some-failed';
+                summaryDiv.className = `summary ${summaryClass}`;
+                summaryDiv.innerHTML = `
+                    <strong>Test Results Summary:</strong><br>
+                    Total Tests: ${totalTests}<br>
+                    Passed: ${this.passedTests}<br>
+                    Failed: ${this.failedTests}
+                `;
+            }
+        }
+
+        // Modified TicTacToe class for testing (without DOM dependencies)
+        class TicTacToeTest {
+            constructor() {
+                this.board = Array(9).fill('');
+                this.currentPlayer = 'X';
+                this.gameActive = true;
+                
+                this.winningConditions = [
+                    [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+                    [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+                    [0, 4, 8], [2, 4, 6]             // Diagonals
+                ];
+            }
+            
+            makeMove(index, player) {
+                if (this.board[index] !== '' || !this.gameActive) {
+                    return false;
+                }
+                
+                this.board[index] = player;
+                
+                if (this.checkWin(player)) {
+                    this.gameActive = false;
+                    return 'win';
+                } else if (this.checkDraw()) {
+                    this.gameActive = false;
+                    return 'draw';
+                } else {
+                    this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
+                    return 'continue';
+                }
+            }
+            
+            getBestMove() {
+                // 1. Try to win
+                for (let i = 0; i < 9; i++) {
+                    if (this.board[i] === '') {
+                        this.board[i] = 'O';
+                        if (this.checkWin('O', false)) {
+                            this.board[i] = '';
+                            return i;
+                        }
+                        this.board[i] = '';
+                    }
+                }
+                
+                // 2. Block player from winning
+                for (let i = 0; i < 9; i++) {
+                    if (this.board[i] === '') {
+                        this.board[i] = 'X';
+                        if (this.checkWin('X', false)) {
+                            this.board[i] = '';
+                            return i;
+                        }
+                        this.board[i] = '';
+                    }
+                }
+                
+                // 3. Take center if available
+                if (this.board[4] === '') {
+                    return 4;
+                }
+                
+                // 4. Take corners
+                const corners = [0, 2, 6, 8];
+                const availableCorners = corners.filter(corner => this.board[corner] === '');
+                if (availableCorners.length > 0) {
+                    return availableCorners[Math.floor(Math.random() * availableCorners.length)];
+                }
+                
+                // 5. Take any available side
+                const sides = [1, 3, 5, 7];
+                const availableSides = sides.filter(side => this.board[side] === '');
+                if (availableSides.length > 0) {
+                    return availableSides[Math.floor(Math.random() * availableSides.length)];
+                }
+                
+                return -1;
+            }
+            
+            checkWin(player, shouldHighlight = true) {
+                for (let condition of this.winningConditions) {
+                    const [a, b, c] = condition;
+                    if (this.board[a] === player && this.board[b] === player && this.board[c] === player) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            
+            checkDraw() {
+                return this.board.every(cell => cell !== '');
+            }
+            
+            resetGame() {
+                this.board = Array(9).fill('');
+                this.currentPlayer = 'X';
+                this.gameActive = true;
+            }
+        }
+
+        // Run tests
+        const testFramework = new TestFramework();
+
+        // Test 1: Initial game state
+        testFramework.test('Initial game state should be correct', () => {
+            const game = new TicTacToeTest();
+            testFramework.assertArrayEqual(game.board, Array(9).fill(''), 'Board should be empty');
+            testFramework.assertEqual(game.currentPlayer, 'X', 'Current player should be X');
+            testFramework.assertTrue(game.gameActive, 'Game should be active');
+        });
+
+        // Test 2: Making valid moves
+        testFramework.test('Should allow valid moves', () => {
+            const game = new TicTacToeTest();
+            const result = game.makeMove(0, 'X');
+            testFramework.assertEqual(game.board[0], 'X', 'Move should be recorded');
+            testFramework.assertEqual(result, 'continue', 'Game should continue');
+            testFramework.assertEqual(game.currentPlayer, 'O', 'Player should switch to O');
+        });
+
+        // Test 3: Preventing invalid moves
+        testFramework.test('Should prevent invalid moves', () => {
+            const game = new TicTacToeTest();
+            game.makeMove(0, 'X');
+            const result = game.makeMove(0, 'O'); // Try to play in same cell
+            testFramework.assertFalse(result, 'Should reject move to occupied cell');
+            testFramework.assertEqual(game.board[0], 'X', 'Cell should remain X');
+        });
+
+        // Test 4: Win detection - horizontal
+        testFramework.test('Should detect horizontal wins', () => {
+            const game = new TicTacToeTest();
+            game.makeMove(0, 'X');
+            game.makeMove(3, 'O');
+            game.makeMove(1, 'X');
+            game.makeMove(4, 'O');
+            const result = game.makeMove(2, 'X'); // Complete top row
+            testFramework.assertEqual(result, 'win', 'Should detect win');
+            testFramework.assertFalse(game.gameActive, 'Game should end');
+        });
+
+        // Test 5: Win detection - vertical
+        testFramework.test('Should detect vertical wins', () => {
+            const game = new TicTacToeTest();
+            game.makeMove(0, 'X');
+            game.makeMove(1, 'O');
+            game.makeMove(3, 'X');
+            game.makeMove(2, 'O');
+            const result = game.makeMove(6, 'X'); // Complete left column
+            testFramework.assertEqual(result, 'win', 'Should detect vertical win');
+        });
+
+        // Test 6: Win detection - diagonal
+        testFramework.test('Should detect diagonal wins', () => {
+            const game = new TicTacToeTest();
+            game.makeMove(0, 'X');
+            game.makeMove(1, 'O');
+            game.makeMove(4, 'X');
+            game.makeMove(2, 'O');
+            const result = game.makeMove(8, 'X'); // Complete main diagonal
+            testFramework.assertEqual(result, 'win', 'Should detect diagonal win');
+        });
+
+        // Test 7: Draw detection
+        testFramework.test('Should detect draws', () => {
+            const game = new TicTacToeTest();
+            // Create a draw scenario
+            const moves = [
+                [0, 'X'], [1, 'O'], [2, 'X'],
+                [3, 'O'], [4, 'X'], [5, 'O'],
+                [6, 'O'], [7, 'X'], [8, 'O']
+            ];
+            
+            let result;
+            moves.forEach(([index, player]) => {
+                result = game.makeMove(index, player);
+            });
+            
+            testFramework.assertEqual(result, 'draw', 'Should detect draw');
+            testFramework.assertFalse(game.gameActive, 'Game should end');
+        });
+
+        // Test 8: AI winning move
+        testFramework.test('AI should take winning move when available', () => {
+            const game = new TicTacToeTest();
+            // Set up board where O can win
+            game.board = ['O', 'O', '', 'X', 'X', '', '', '', ''];
+            const move = game.getBestMove();
+            testFramework.assertEqual(move, 2, 'AI should take winning position');
+        });
+
+        // Test 9: AI blocking move
+        testFramework.test('AI should block player winning move', () => {
+            const game = new TicTacToeTest();
+            // Set up board where X can win next move
+            game.board = ['X', 'X', '', 'O', '', '', '', '', ''];
+            const move = game.getBestMove();
+            testFramework.assertEqual(move, 2, 'AI should block player win');
+        });
+
+        // Test 10: AI center preference
+        testFramework.test('AI should prefer center when available', () => {
+            const game = new TicTacToeTest();
+            // Empty board except for one X
+            game.board = ['X', '', '', '', '', '', '', '', ''];
+            const move = game.getBestMove();
+            testFramework.assertEqual(move, 4, 'AI should take center');
+        });
+
+        // Test 11: Reset functionality
+        testFramework.test('Game reset should work correctly', () => {
+            const game = new TicTacToeTest();
+            game.makeMove(0, 'X');
+            game.makeMove(1, 'O');
+            game.resetGame();
+            
+            testFramework.assertArrayEqual(game.board, Array(9).fill(''), 'Board should be empty after reset');
+            testFramework.assertEqual(game.currentPlayer, 'X', 'Current player should be X after reset');
+            testFramework.assertTrue(game.gameActive, 'Game should be active after reset');
+        });
+
+        // Test 12: Multiple wins don't interfere
+        testFramework.test('Should handle multiple potential wins correctly', () => {
+            const game = new TicTacToeTest();
+            // Test that first win condition found is used
+            game.board = ['X', 'X', 'X', 'X', 'O', 'O', '', '', ''];
+            testFramework.assertTrue(game.checkWin('X'), 'Should detect X win');
+            testFramework.assertFalse(game.checkWin('O'), 'Should not detect O win');
+        });
+
+        // Run all tests
+        testFramework.runTests();
+    </script>
+</body>
+</html>

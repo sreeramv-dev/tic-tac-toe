@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bluey's Tic-Tac-Toe Adventure</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Welcome Screen -->
+    <div id="welcome-screen" class="modal-overlay">
+        <div class="welcome-modal">
+            <div class="bluey-header">
+                <div class="header-characters">
+                    <div class="character-badge bluey-badge">
+                        <div class="character-emoji">🐕</div>
+                        <div class="character-name">Bluey</div>
+                    </div>
+                    <div class="character-badge bingo-badge">
+                        <div class="character-emoji">🐶</div>
+                        <div class="character-name">Bingo</div>
+                    </div>
+                </div>
+                <h1>🎾 Bluey's Tic-Tac-Toe Adventure!</h1>
+                <p>Let's play a game of tic-tac-toe!</p>
+            </div>
+            
+            <div class="setup-form">
+                <div class="input-group">
+                    <label for="player-name">What's your name?</label>
+                    <input type="text" id="player-name" placeholder="Enter your name" maxlength="20">
+                </div>
+                
+                <div class="input-group">
+                    <label>Choose your difficulty:</label>
+                    <div class="difficulty-options">
+                        <label class="difficulty-option">
+                            <input type="radio" name="difficulty" value="easy" checked>
+                            <div class="option-card bluey-mode">
+                                <div class="character">
+                                    <div class="character-icon">🐕</div>
+                                </div>
+                                <h3>Bluey Mode</h3>
+                                <p>Fun and friendly!</p>
+                            </div>
+                        </label>
+                        <label class="difficulty-option">
+                            <input type="radio" name="difficulty" value="hard">
+                            <div class="option-card dad-mode">
+                                <div class="character">
+                                    <div class="character-icon">👨‍🦲</div>
+                                </div>
+                                <h3>Dad Mode</h3>
+                                <p>Strategic challenge!</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                
+                <button id="start-tournament" class="start-button">
+                    🌟 Start Tournament! 🌟
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="game-screen" class="game-container" style="display: none;">
+        <!-- Tournament Header -->
+        <div class="tournament-header">
+            <div class="player-info">
+                <h2 id="player-display">Player</h2>
+                <div class="difficulty-badge" id="difficulty-display">Bluey Mode</div>
+            </div>
+            
+            <div class="tournament-progress">
+                <div class="game-counter">
+                    <span id="current-game">1</span> of 5
+                </div>
+                <div class="series-score">
+                    <div class="score-item player-score">
+                        <span class="score-label" id="player-name-score">You</span>
+                        <span class="score-value" id="player-series-score">0</span>
+                    </div>
+                    <div class="score-divider">-</div>
+                    <div class="score-item computer-score">
+                        <span class="score-label">Computer</span>
+                        <span class="score-value" id="computer-series-score">0</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="timer-section">
+                <div class="session-timer">
+                    ⏰ <span id="session-timer">30:00</span>
+                </div>
+                <div class="game-timer">
+                    Game: <span id="game-timer">00:00</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Game Area -->
+        <div class="container">
+            <h1>Tic-Tac-Toe</h1>
+            <div class="game-info">
+                <div id="game-status">Your turn! Click a cell to play.</div>
+                <div class="game-controls">
+                    <button id="reset-btn">New Game</button>
+                    <button id="end-tournament">End Tournament</button>
+                </div>
+            </div>
+            
+            <div class="game-board" id="game-board">
+                <div class="cell" data-index="0"></div>
+                <div class="cell" data-index="1"></div>
+                <div class="cell" data-index="2"></div>
+                <div class="cell" data-index="3"></div>
+                <div class="cell" data-index="4"></div>
+                <div class="cell" data-index="5"></div>
+                <div class="cell" data-index="6"></div>
+                <div class="cell" data-index="7"></div>
+                <div class="cell" data-index="8"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Victory Celebration Overlay -->
+    <div id="celebration-overlay" class="celebration-overlay" style="display: none;">
+        <div class="celebration-content">
+            <div class="celebration-text">
+                <h1 id="celebration-title">Wackadoo!</h1>
+                <p id="celebration-message">You won this game!</p>
+            </div>
+            <div class="celebration-animation">
+                <div class="confetti"></div>
+                <div class="hearts"></div>
+                <div class="stars"></div>
+            </div>
+            <button id="continue-tournament" class="celebration-button">
+                Next Game! 🎮
+            </button>
+        </div>
+    </div>
+
+    <!-- Tournament Results Screen -->
+    <div id="results-screen" class="modal-overlay" style="display: none;">
+        <div class="results-modal">
+            <div class="results-header">
+                <h1 id="tournament-result-title">Tournament Complete!</h1>
+                <div id="final-score" class="final-score">Final Score</div>
+            </div>
+            
+            <div class="results-content">
+                <div id="results-summary" class="results-summary"></div>
+                
+                <div class="results-actions">
+                    <button id="download-results" class="download-button">
+                        📊 Download Results
+                    </button>
+                    <button id="new-tournament" class="new-tournament-button">
+                        🎮 New Tournament
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
